@@ -438,6 +438,7 @@ module ActiveSupport #:nodoc:
 
     # Is the provided constant path defined?
     def qualified_const_defined?(path)
+      puts "qualified_const_defined: #{path}"
       Object.const_defined?(path, false)
     end
 
@@ -466,6 +467,7 @@ module ActiveSupport #:nodoc:
 
     # Search for a file in autoload_paths matching the provided suffix.
     def search_for_file(path_suffix)
+      puts "search_for_file #{path_suffix}"
       path_suffix += ".rb" unless path_suffix.ends_with?(".rb")
 
       autoload_paths.each do |root|
@@ -538,6 +540,8 @@ module ActiveSupport #:nodoc:
     # it is not possible to load the constant into from_mod, try its parent
     # module using +const_missing+.
     def load_missing_constant(from_mod, const_name)
+      puts "load_missing_constant: #{from_mod}, #{const_name}"
+
       unless qualified_const_defined?(from_mod.name) && Inflector.constantize(from_mod.name).equal?(from_mod)
         raise ArgumentError, "A copy of #{from_mod} has been removed from the module tree but is still active!"
       end
