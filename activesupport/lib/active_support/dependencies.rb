@@ -466,7 +466,7 @@ module ActiveSupport #:nodoc:
 
     # Search for a file in autoload_paths matching the provided suffix.
     def search_for_file(path_suffix)
-      path_suffix += ".rb" unless path_suffix.end_with?(".rb")
+      path_suffix += ".rb" unless path_suffix.ends_with?(".rb")
 
       autoload_paths.each do |root|
         path = File.join(root, path_suffix)
@@ -538,8 +538,7 @@ module ActiveSupport #:nodoc:
     # it is not possible to load the constant into from_mod, try its parent
     # module using +const_missing+.
     def load_missing_constant(from_mod, const_name)
-      from_mod_name = real_mod_name(from_mod)
-      unless qualified_const_defined?(from_mod_name) && Inflector.constantize(from_mod_name).equal?(from_mod)
+      unless qualified_const_defined?(from_mod.name) && Inflector.constantize(from_mod.name).equal?(from_mod)
         raise ArgumentError, "A copy of #{from_mod} has been removed from the module tree but is still active!"
       end
 
@@ -550,7 +549,7 @@ module ActiveSupport #:nodoc:
 
       if file_path
         expanded = File.expand_path(file_path)
-        expanded.delete_suffix!(".rb")
+        expanded.sub!(/\.rb\z/, "")
 
         if loading.include?(expanded)
           raise "Circular dependency detected while autoloading constant #{qualified_name}"
