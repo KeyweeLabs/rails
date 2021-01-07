@@ -14,23 +14,8 @@ class NameError
     # It extends NameError#message with spell corrections which are SLOW.
     # We should use original_message message instead.
     message = respond_to?(:original_message) ? original_message : self.message
-    return unless message.start_with?("uninitialized constant ")
-
-    receiver = begin
-      self.receiver
-    rescue ArgumentError
-      nil
-    end
-
-    if receiver == Object
-      name.to_s
-    elsif receiver
-      "#{real_mod_name(receiver)}::#{self.name}"
-    else
-      if match = message.match(/((::)?([A-Z]\w*)(::[A-Z]\w*)*)$/)
-        match[1]
-      end
-    end
+    unless /undefined local variable or method/.match?(message)
+      $1 if /((::)?([A-Z]\w*)(::[A-Z]\w*)*)$/ =~ message
   end
 
   # Was this exception raised because the given name was missing?
